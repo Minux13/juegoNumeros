@@ -16,8 +16,8 @@ var colores={
 
 function pieza(){
 
-	var equis			= 0;
-	var ye				= 0;
+	var x			= 0;
+	var y				= 0;
 	var numero			= 0;
 	var numeroX			= 0;
 	var numeroY			= 0;
@@ -35,7 +35,7 @@ var tamano={
 var frames={
 	total : 0,
 	maximo: 19,
-	desplazamientoPorCU : 8;
+	desplazamiento : 5
 }
 
 var hueco={
@@ -48,7 +48,9 @@ var hueco={
 	coordenada : 0
 }
 
-var posiciones = {
+
+//Vertices arriba izquierda de las piezas en el contenedor, el numero del elemento es el numero de la pieza comenzando por 0
+var coordenadasAbsolutas = {
 	
 	x : [0, tamano.pieza, 2*tamano.pieza, 3*tamano.pieza, 4*tamano.pieza, 0, tamano.pieza, 2*tamano.pieza, 3*tamano.pieza, 4*tamano.pieza, 0, tamano.pieza, 2*tamano.pieza, 3*tamano.pieza, 4*tamano.pieza, 0, tamano.pieza, 2*tamano.pieza, 3*tamano.pieza, 4*tamano.pieza, 0, tamano.pieza, 2*tamano.pieza, 3*tamano.pieza, 4*tamano.pieza],
 	y : [0, 0, 0, 0, 0, tamano.pieza, tamano.pieza, tamano.pieza, tamano.pieza, tamano.pieza, 2*tamano.pieza, 2*tamano.pieza, 2*tamano.pieza, 2*tamano.pieza, 2*tamano.pieza, 3*tamano.pieza, 3*tamano.pieza, 3*tamano.pieza, 3*tamano.pieza, 3*tamano.pieza, 4*tamano.pieza, 4*tamano.pieza, 4*tamano.pieza, 4*tamano.pieza, 4*tamano.pieza]
@@ -88,8 +90,8 @@ function juego(){
 
 		//obtiene x y y
 
-		piezas[i].equis	= x * tamano.pieza;
-		piezas[i].ye	= y * tamano.pieza;
+		piezas[i].x	= x * tamano.pieza;
+		piezas[i].y	= y * tamano.pieza;
 
 		
 		//El numero de la pieza
@@ -130,14 +132,16 @@ function juego(){
 		
 	}
 
+	inicio();
+}
 
+function inicio(){
+		
 	window.canvas.addEventListener("click", clickear);
 
 	dibujaTodo();
+	
 }
-
-
-
 
 function clickear(ev){
 
@@ -150,7 +154,6 @@ function clickear(ev){
 
 	console.log(clickY, clickX);
 
-	var direccion;
 
 	//seleccionado;
 
@@ -283,52 +286,110 @@ function clickear(ev){
 	if(direccion == izquierda){
 			
 		//console.log(piezas[seleccionado].numero + "debe de ir a la izquierda");	
-		reproduccion = setInterval(function(){cambioCoordenadas(seleccionado, izquierda);}, 20);
+		reproduccion = setInterval(function(){desplazamientoFrame(seleccionado, izquierda);}, 20);
 		document.getElementById("canvas").removeEventListener("click", clickear);
 	}
 	else if(direccion == derecha){
 		//console.log(piezas[seleccionado].numero + "debe de ir a la derecha");	
-		reproduccion = setInterval(function(){cambioCoordenadas(seleccionado, derecha);}, 20);
+		reproduccion = setInterval(function(){desplazamientoFrame(seleccionado, derecha);}, 20);
 		document.getElementById("canvas").removeEventListener("click", clickear);
 	}
 	else if(direccion == arriba){
 		//console.log(piezas[seleccionado].numero + "debe de ir a la arriba");	
-		reproduccion = setInterval(function(){cambioCoordenadas(seleccionado, arriba);}, 20);
+		reproduccion = setInterval(function(){desplazamientoFrame(seleccionado, arriba);}, 20);
 		document.getElementById("canvas").removeEventListener("click", clickear);
 	}
 	else if(direccion == abajo){
 		//console.log(piezas[seleccionado].numero + "debe de ir a la abajo");	
-		reproduccion = setInterval(function(){cambioCoordenadas(seleccionado, abajo);}, 20);
+		reproduccion = setInterval(function(){desplazamientoFrame(seleccionado, abajo);}, 20);
 		document.getElementById("canvas").removeEventListener("click", clickear);
 	}
 	else if(direccion == ninguna){
-		//console.log(piezas[seleccionado].numero + "debe de ir a ninguna");	
-		//setInterval(function(){cambioCoordenadas(seleccionado, arriba);}, 40);
 	}
 }
 
 
 
+function desplazamientoFrame(seleccionado, direccion){
+
+	console.log("funcionando")
+	
+	if(direccion == izquierda){
+		piezas[seleccionado].x			= piezas[seleccionado].x - frames.desplazamiento;
+		piezas[seleccionado].numeroX	= piezas[seleccionado].numeroX - frames.desplazamiento;
+	}
+
+	else if(direccion == derecha){
+		piezas[seleccionado].x			= piezas[seleccionado].x + frames.desplazamiento;
+		piezas[seleccionado].numeroX	= piezas[seleccionado].numeroX + frames.desplazamiento;
+	}
+	else if(direccion == arriba){
+		piezas[seleccionado].numeroY	= piezas[seleccionado].numeroY - frames.desplazamiento;
+		piezas[seleccionado].y			= piezas[seleccionado].y - frames.desplazamiento;
+	}
+	else if(direccion == abajo){
+		piezas[seleccionado].numeroY	= piezas[seleccionado].numeroY + frames.desplazamiento;
+		piezas[seleccionado].y			= piezas[seleccionado].y + frames.desplazamiento;
+	}
+
+	
+	dibuja(seleccionado);
+
+		
+	if(frames.total == frames.maximo){
+	
+		console.log(frames.total)
+
+		var posicion30;
+
+		window.canvas.addEventListener("click", clickear);
+		clearInterval(reproduccion);
+		frames.total = 0
+		
+		console.log(frames.total)
+		
+		//Obtiene la posicisión donde esta el hueco o donde piezas.numero == 30
+
+		for(var elemento = 0; elemento <= 24; elemento++){				
+			if(piezas[elemento].numero == 30){
+				posicion30 = elemento;
+				break;		
+			}
+		}
+
+
+		//Pasa todos los atributos de la pieza a la nueva posición que era la del hueco, con hueco coordenada me refiero solo al numero de elemento en el contenedor
+		piezas[posicion30].numero		= piezas[seleccionado].numero
+		piezas[posicion30].x			= piezas[seleccionado].x;
+		piezas[posicion30].y			= piezas[seleccionado].y;
+		piezas[posicion30].numeroX		= piezas[seleccionado].numeroX
+		piezas[posicion30].numeroY		= piezas[seleccionado].numeroY
+		piezas[posicion30].color		= piezas[seleccionado].color;
+		piezas[posicion30].colorNumero	= piezas[seleccionado].colorNumero;
+
+		piezas[seleccionado].numero= 30;
+		
+		inicio();
+	}
+
+	else {
+		frames.total++;		
+	}
+}
+
 
 function dibuja(seleccionado){
 
-	//Dibuja el hueco primero para que aparezca debajo
-	ctx.beginPath();
-	ctx.lineWidth = tamano.linea;
-	ctx.strokeStyle = colores.lineaSeparacion;
-	ctx.strokeRect(hueco.x, hueco.y, tamano.pieza-(tamano.linea/2), tamano.pieza-(tamano.linea/2));
-	ctx.fillStyle = colores.hueco;
-	ctx.fillRect(hueco.x, hueco.y, tamano.pieza-(tamano.linea/2), tamano.pieza-(tamano.linea/2));
-	ctx.closePath();
-	ctx.stroke();	
-		
+
+	ctx.clearRect(coordenadasAbsolutas.x[seleccionado], coordenadasAbsolutas.y[seleccionado], tamano.pieza-(tamano.linea/2), tamano.pieza-(tamano.linea/2));
+
 			
 	ctx.beginPath();
 	ctx.lineWidth = tamano.linea;
 	ctx.strokeStyle = colores.lineaSeparacion;
-	ctx.strokeRect(piezas[seleccionado].equis, piezas[seleccionado].ye, tamano.pieza-(tamano.linea/2), tamano.pieza-(tamano.linea/2));
+	ctx.strokeRect(piezas[seleccionado].x, piezas[seleccionado].y, tamano.pieza-(tamano.linea/2), tamano.pieza-(tamano.linea/2));
 	ctx.fillStyle = piezas[seleccionado].color;
-	ctx.fillRect(piezas[seleccionado].equis, piezas[seleccionado].ye, tamano.pieza-(tamano.linea/2), tamano.pieza-(tamano.linea/2));
+	ctx.fillRect(piezas[seleccionado].x, piezas[seleccionado].y, tamano.pieza-(tamano.linea/2), tamano.pieza-(tamano.linea/2));
 	ctx.closePath();
 	ctx.stroke();	
 
@@ -339,100 +400,21 @@ function dibuja(seleccionado){
 }
 
 
-
-function cambioCoordenadas(seleccionado, direccion){
-
-	if(frames.total == 0){
-
-		//obtiene la posición inicial de la pieza seleccionada por que ahi sera el hueco
-		hueco.x = 	piezas[seleccionado].equis;
-		hueco.y = 	piezas[seleccionado].ye;
-		
-		//Obtiene las posiciones del hueco que ahora seran de la pieza seleccionada
-		if(direccion == izquierda){
-
-			hueco.anteriorX =	posiciones.x[seleccionado -1];
-			hueco.anteriorY =	posiciones.y[seleccionado -1];
-			hueco.coordenada =	seleccionado -1;
-		}
-		else if(direccion == derecha){
-			hueco.anteriorX =	posiciones.x[seleccionado +1];
-			hueco.anteriorY =	posiciones.y[seleccionado +1];
-			hueco.coordenada =	seleccionado +1;
-		}	
-		else if(direccion == arriba){
-			hueco.anteriorX =	posiciones.x[seleccionado -5];
-			hueco.anteriorY =	posiciones.y[seleccionado -5];
-			hueco.coordenada =	seleccionado -5;
-		}			
-		else if(direccion == abajo){
-			hueco.anteriorX =	posiciones.x[seleccionado +5];
-			hueco.anteriorY =	posiciones.y[seleccionado +5];
-			hueco.coordenada =	seleccionado +5;
-		}		
-	}
-
-	if(direccion == izquierda){
-		piezas[seleccionado].equis		= piezas[seleccionado].equis - 5;
-		piezas[seleccionado].numeroX	= piezas[seleccionado].numeroX - 5;
-	}
-
-	else if(direccion == derecha){
-		piezas[seleccionado].equis		= piezas[seleccionado].equis + 5;
-		piezas[seleccionado].numeroX	= piezas[seleccionado].numeroX + 5;
-	}
-	else if(direccion == arriba){
-		piezas[seleccionado].numeroY	= piezas[seleccionado].numeroY - 5;
-		piezas[seleccionado].ye			= piezas[seleccionado].ye    - 5;
-	}
-	else if(direccion == abajo){
-		piezas[seleccionado].numeroY	= piezas[seleccionado].numeroY + 5;
-		piezas[seleccionado].ye			= piezas[seleccionado].ye    + 5;
-	}
-
-	dibuja(seleccionado);
-
-	if(frames.total == frames.maximo){
-		window.canvas.addEventListener("click", clickear);
-		clearInterval(reproduccion);
-		frames.total == 0
-
-		//Pasa todos los atributos de la pieza a la nueva posición que era la del hueco, con hueco coordenada me refiero solo al numero de elemento en el contenedor
-		piezas[hueco.coordenada].numero			= piezas[seleccionado].numero
-		piezas[hueco.coordenada].equis			= piezas[seleccionado].equis;
-		piezas[hueco.coordenada].ye				= piezas[seleccionado].ye;
-		piezas[hueco.coordenada].numeroX		= piezas[seleccionado].numeroX
-		piezas[hueco.coordenada].numeroY		= piezas[seleccionado].numeroY
-		piezas[hueco.coordenada].color			= piezas[seleccionado].color;
-		piezas[hueco.coordenada].colorNumero	= piezas[seleccionado].colorNumero;
-
-		piezas[seleccionado].numero= 30;
-		piezas[seleccionado].equis= posiciones.x[seleccionado];
-		piezas[seleccionado].ye= posiciones.y[seleccionado];
-		piezas[seleccionado].numeroX= posiciones.x[seleccionado] + 20;
-		piezas[seleccionado].numeroY= posiciones.y[seleccionado] + 20;
-		piezas[seleccionado].color= colores.hueco;
-		piezas[seleccionado].colorNumero= colores.hueco;
-
-		//dibujaTodo();
-		return 0;
-	}
-
-	frames.total++;
-}
-
-
 function dibujaTodo(){
 		
 
 	for(var i=0; i<=24; i++){
+
+		if(piezas[i].numero == 30){
+			continue;
+		}
 		
 		ctx.beginPath();
 		ctx.lineWidth = tamano.linea;
 		ctx.strokeStyle = colores.lineaSeparacion;
-		ctx.strokeRect(piezas[i].equis, piezas[i].ye, tamano.pieza, tamano.pieza);
+		ctx.strokeRect(piezas[i].x, piezas[i].y, tamano.pieza-(tamano.linea/2), tamano.pieza-(tamano.linea/2));
 		ctx.fillStyle = piezas[i].color;
-		ctx.fillRect(piezas[i].equis, piezas[i].ye, tamano.pieza, tamano.pieza);
+		ctx.fillRect(piezas[i].x, piezas[i].y, tamano.pieza-(tamano.linea/2), tamano.pieza-(tamano.linea/2));
 		ctx.closePath();
 		ctx.stroke();	
 
@@ -442,5 +424,7 @@ function dibujaTodo(){
 		ctx.fillText( piezas[i].numero.toString(), piezas[i].numeroX, piezas[i].numeroY);
 
 	}
+
+
 }
 
