@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8">
+		<script src="balls.js"></script>
+		<title>Juego de Números</title>
+		<style>
+			body {
+				background-color: #330033;	
+			}
+		
+			h1 {
+					
+				color: #cccccc;
+				text-align: center;
+				margin-top: 30px;	
+			}
+
+			div {
+				margin-left: auto;
+    			margin-right: auto;
+				margin-top: 60px;
+				padding: 7px;
+    			display: block;	
+				position: relative;
+				width: 500px;
+				height: 500px;
+				border: #ccc solid;
+			}
+			canvas {
+	    		margin: 0px;
+				padding: 0px;
+				position: relative;
+				top: 0%;
+				left: 0%;
+			}
+			</style>
+	</head>
+	<body onload="juego()">
+		<h1>Juego de Números</h1>
+		<div>
+			<canvas id="canvas" width=500 height=500>
+				Tu navegador no reproduce esta aplicación. Puedes intentar con una versión actualizada de Chrome.
+			</canvas>
+		</div>
+	</body>
+</html>
