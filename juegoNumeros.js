@@ -34,19 +34,11 @@ var tamano={
 
 var frames={
 	total : 0,
-	maximo: 19,
+	maximo: 19,			//Es la cantidad del tamaño de la pieza entre el desplazamiento mas el tamaño de la línea 
 	desplazamiento : 5
 }
 
-var hueco={
 
-	x:0,
-	y:0,
-	anteriorX : 0,
-	anteriorY : 0,
-	numeroAnterior : 0,
-	coordenada : 0
-}
 
 
 //Vertices arriba izquierda de las piezas en el contenedor, el numero del elemento es el numero de la pieza comenzando por 0
@@ -58,14 +50,30 @@ var coordenadasAbsolutas = {
 
 function juego(){
 	
-	piezas = [];
-	//numeros el numero del elemento es la posición, el valor que contiene es el núnero de la pieza
-	var numero;
-	var numeros	 = [30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30];
-	var ocupados = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-	var x		= 0;
-	var y		= 0;
+	piezas = [];	//Arreglo que contendrá los objetos con las propiedades de las piezas.
+	var numero;		//Número random
+	var numeros	 = [30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30];//Es el arreglo donde momentaneamente se acumularán los números-nombres de las piezas. El número del elemento del arreglo es el número random generado y el valor que contiene se asignara del 1 al 24 en el ciclo for. El número del elemento es la posición en el contenedor, el valor que contiene es el núnero de la pieza.
 
+	/*
+	
+	Valor de elemento en las posiciones
+
+	0___1___2___3___4
+	|   |   |   |   |
+	5___6___7___8___9
+	|   |   |   |   |
+   10__11__12__13__14
+	|   |   |   |   |
+   15__16__17__18__19
+	|   |   |   |   |
+   20__21__22__23__24
+	
+	*/
+
+	var ocupados = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];			//El número del elemento del arreglo es el número-nombre de la pieza. Cuando la función que genera mumeros randon haya dado un numero ese número sera igual al número del elemento y el valor de esa posción cambia a 1.
+
+
+	//Obtiene un número random no repetido para cada pieza, 
 	for(var i=0; i<=23; i++){
 		
 		numero=Math.floor(Math.random() * 25);
@@ -90,29 +98,27 @@ function juego(){
 
 		//obtiene x y y
 
-		piezas[i].x	= x * tamano.pieza;
-		piezas[i].y	= y * tamano.pieza;
+		piezas[i].x	= coordenadasAbsolutas.x[i];
+		piezas[i].y	= coordenadasAbsolutas.y[i];
 
 		
 		//El numero de la pieza
 		piezas[i].numero = numeros[i];
 
+		//Coordenadas de el letrero del numero de la pieza en X
 		if(numeros[i] <= 9){
-			piezas[i].numeroX = tamano.pieza * x + 40;
+			piezas[i].numeroX = coordenadasAbsolutas.x[i] + 40;
 		}
 		else{
-			piezas[i].numeroX = tamano.pieza * x + 30;
+			piezas[i].numeroX = coordenadasAbsolutas.x[i] + 30;
 		}
 
-		//Coordenadas del numero dibujado
-		piezas[i].numeroY		= y * 100 + 60;
+		//Coordenadas del numero dibujado en Y
+		piezas[i].numeroY		= coordenadasAbsolutas.y[i] + 60;
 
-
-		if(numeros[i] == 30){
-			piezas[i].color	= colores.hueco;
-			piezas[i].colorNumero = colores.hueco;
-		}
-		else if(numeros[i] % 2 == 0){
+		
+		//Da los colores de las piezas
+		if(numeros[i] % 2 == 0){
 			piezas[i].color	= colores.piezasPares;
 			piezas[i].colorNumero = colores.numeroPares;
 		}
@@ -120,15 +126,6 @@ function juego(){
 			piezas[i].color	= colores.piezasImpares;
 			piezas[i].colorNumero = colores.numeroImpares;
 		}
-
-
-		x++;
-		
-		if(i==4 || i==9 || i==14 || i==19 ){
-			y++;
-			x=0;
-		}
-
 		
 	}
 
@@ -284,23 +281,18 @@ function clickear(ev){
 	direccion =	direccionMovimiento(seleccionado);
 
 	if(direccion == izquierda){
-			
-		//console.log(piezas[seleccionado].numero + "debe de ir a la izquierda");	
 		reproduccion = setInterval(function(){desplazamientoFrame(seleccionado, izquierda);}, 20);
 		document.getElementById("canvas").removeEventListener("click", clickear);
 	}
 	else if(direccion == derecha){
-		//console.log(piezas[seleccionado].numero + "debe de ir a la derecha");	
 		reproduccion = setInterval(function(){desplazamientoFrame(seleccionado, derecha);}, 20);
 		document.getElementById("canvas").removeEventListener("click", clickear);
 	}
 	else if(direccion == arriba){
-		//console.log(piezas[seleccionado].numero + "debe de ir a la arriba");	
 		reproduccion = setInterval(function(){desplazamientoFrame(seleccionado, arriba);}, 20);
 		document.getElementById("canvas").removeEventListener("click", clickear);
 	}
 	else if(direccion == abajo){
-		//console.log(piezas[seleccionado].numero + "debe de ir a la abajo");	
 		reproduccion = setInterval(function(){desplazamientoFrame(seleccionado, abajo);}, 20);
 		document.getElementById("canvas").removeEventListener("click", clickear);
 	}
